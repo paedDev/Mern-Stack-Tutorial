@@ -10,8 +10,12 @@ const PORT = 5000 || process.env.PORT;
 //middlewares
 app.use(cors());
 app.use(express.json());
-app.use("/", (req, res) => {
-  res.send("<h1>Hello world</h1>");
+// app.use("/", (req, res) => {
+//   res.send("<h1>Hello world</h1>");
+// });
+
+app.post("/products", async (req, res) => {
+  const product = req.body;
 });
 
 app.listen(PORT, (req, res) => {
