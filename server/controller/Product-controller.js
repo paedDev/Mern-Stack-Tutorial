@@ -1,6 +1,21 @@
-import Product from "../models/Product";
+import Product from "../models/Product.js";
 //lets do all the fetching,adding,deleting and updating here
-export const fetchAllProducts = async (req, res) => {};
+export const fetchAllProducts = async (req, res) => {
+  let productList;
+  try {
+    productList = await Product.find();
+    if (!productList) {
+      return res.status(404).json({ message: "No Products Found" });
+    }
+    return res.status(200).json({
+      message: "Successfully retrieved all the product list",
+      data: productList,
+    });
+  } catch (error) {
+    console.log(`error in fetching products`, error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
 export const addNewProduct = async (req, res) => {
   const product = req.body;
   if (!product.name || !product.price || !product.image) {
@@ -12,8 +27,19 @@ export const addNewProduct = async (req, res) => {
     return res.status(200).json({ newProduct });
   } catch (err) {
     console.error(`Error Creating Product`, err.message);
-    return res.status(500);
+    return res.status(500).json({ error: "Failed to save product" });
   }
 };
-export const deleteProduct = async (req, res) => {};
 export const updateProduct = async (req, res) => {};
+export const deleteProduct = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const findCurrentProduct = await Product.findByIdAndDelete(id);
+    if (!findCurrentProduct) {
+      return res.status(404).json({ message: "Product Item not found" });
+    }
+    return res.status(200).json({ message: "Successfully Deleted" });
+  } catch (error) {
+    res.status(404).json({ message: "Unable to delete! Please try again" });
+  }
+};
