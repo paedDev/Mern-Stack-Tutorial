@@ -3,13 +3,16 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
 import { BrowserRouter } from "react-router-dom";
+import GlobalState from './context/index.jsx';
 
 createRoot(document.getElementById('root')).render(
 
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <GlobalState>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </GlobalState>
   </StrictMode>
 
 );
