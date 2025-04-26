@@ -8,6 +8,12 @@ export const GlobalContext = createContext({
 
 export default function GlobalState({ children }) {
     const [theme, setTheme] = useState(() => localStorage.getItem("theme") || 'light');
+    const [newProduct, setNewProduct] = useState({
+        name: "",
+        price: "",
+        image: ""
+    });
+    const [loading, setLoading] = useState(false);
 
     const toggleTheme = () => {
         setTheme(t => (t === 'light' ? 'dark' : 'light'));
@@ -17,7 +23,7 @@ export default function GlobalState({ children }) {
         localStorage.setItem("theme", theme);
     }, [theme]);
     return (
-        <GlobalContext.Provider value={{ theme, toggleTheme }}>
+        <GlobalContext.Provider value={{ theme, toggleTheme, newProduct, setNewProduct, loading, setLoading, }}>
             {children}
         </GlobalContext.Provider>
     );
