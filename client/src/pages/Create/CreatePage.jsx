@@ -5,18 +5,25 @@ import axios from "axios";
 import { BASE_URL } from '../../utils/apiPaths';
 import { useNavigate } from 'react-router-dom';
 const CreatePage = () => {
-    const { newProduct, setNewProduct, theme } = useContext(GlobalContext);
+    const { newProduct, setNewProduct, theme, isEdit, setIsEdit } = useContext(GlobalContext);
     const navigate = useNavigate();
     const handleAddProduct = async () => {
         if (!newProduct.name || !newProduct.price || !newProduct.image) {
             toast.error("Please fill in all the fields");
         }
         try {
-            const response = await axios.post(`${BASE_URL}/api/products/add`, {
-                name: newProduct.name,
-                price: newProduct.price,
-                image: newProduct.image,
-            });
+            const response = isEdit
+                ? await axios.put(`${BASE_URL}/api/products/${location.state.getCurrentProductItem._id}`, {
+                    name: newProduct.name,
+                    price: newProduct.price,
+                    image: newProduct.image,
+                })
+                :
+                await axios.post(`${BASE_URL}/api/products/add`, {
+                    name: newProduct.name,
+                    price: newProduct.price,
+                    image: newProduct.image,
+                });
             const result = await response.data;
             if (result) {
                 setNewProduct({
