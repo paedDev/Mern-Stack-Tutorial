@@ -5,8 +5,10 @@ import { AiFillDelete } from "react-icons/ai";
 import { FaRegEdit } from "react-icons/fa";
 import { BASE_URL } from '../../utils/apiPaths';
 import { GlobalContext } from '../../context';
+import { useNavigate } from 'react-router-dom';
 const ProductCard = ({ productItem, fetchListsOfProducts }) => {
     const { theme } = useContext(GlobalContext);
+    const navigate = useNavigate();
     const usdFormatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
@@ -29,6 +31,9 @@ const ProductCard = ({ productItem, fetchListsOfProducts }) => {
         }
 
     };
+    const handleEdit = (productItem) => {
+        navigate('/create-product', { state: { getCurrentProductItem: productItem } });
+    };
 
     return (
         <div key={productItem._id} className={`w-full rounded-xl overflow-hidden shadow-lg h-100% ${theme === "dark" ? "bg-gray-800" : "bg-white"}  `}>
@@ -40,7 +45,7 @@ const ProductCard = ({ productItem, fetchListsOfProducts }) => {
                 </div>
                 {/* Icons here delete and update(edit) */}
                 <div className='px-2 flex space-x-2 justify-start items-center text-center'>
-                    <FaRegEdit className='bg-blue-200 text-blue-800 rounded-sm p-2' size={36} />
+                    <FaRegEdit className='bg-blue-200 text-blue-800 rounded-sm p-2' size={36} onClick={() => handleEdit(productItem)} />
                     <AiFillDelete className='bg-red-200 text-gray-800 rounded-sm p-2 ' size={36}
                         onClick={() => handleDeleteProduct(productItem._id)} />
 

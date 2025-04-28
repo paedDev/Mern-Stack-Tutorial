@@ -1,19 +1,31 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { GlobalContext } from '../../context';
 import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import { BASE_URL } from '../../utils/apiPaths';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 const CreatePage = () => {
     const { newProduct, setNewProduct, theme, isEdit, setIsEdit } = useContext(GlobalContext);
     const navigate = useNavigate();
+    const location = useLocation();
+    useEffect(() => {
+        if (location.state?.getCurrentProductItem) {
+            setIsEdit(true);
+            const { getCurrentProductItem } = location.state;
+            setNewProduct({
+                name: getCurrentProductItem.name,
+                price: getCurrentProductItem.price,
+                image: getCurrentProductItem.image,
+            });
+        }
+    }, [location]);
     const handleAddProduct = async () => {
         if (!newProduct.name || !newProduct.price || !newProduct.image) {
             toast.error("Please fill in all the fields");
         }
         try {
             const response = isEdit
-                ? await axios.put(`${BASE_URL}/api/products/${location.state.getCurrentProductItem._id}`, {
+                ? await axios.put(`${BASE_URL}/api/products/update/${location.state.getCurrentProductItem._id}`, {
                     name: newProduct.name,
                     price: newProduct.price,
                     image: newProduct.image,
@@ -26,18 +38,21 @@ const CreatePage = () => {
                 });
             const result = await response.data;
             if (result) {
+                setIsEdit(false);
                 setNewProduct({
                     name: "",
                     price: "",
                     image: ""
                 });
-                toast.success("Product created successfully");
+                {
+                    isEdit ? toast.success("Product edit successfully") : toast.success("Product created successfully");
+                }
                 setTimeout(() => {
                     navigate("/");
                 }, 3000);
             }
         } catch (err) {
-            console.err(`Error saving product:`, err);
+            console.log(`Error saving product:`, err);
             toast.error("Something went wrong, Please try again");
         }
 
@@ -62,7 +77,11 @@ const CreatePage = () => {
                         className={`w-full outline-gray-500 outline-1 px-4 py-2 ${theme === "dark" ? "placeholder:text-gray-500" : "placeholder:text-gray-800"} rounded-lg`} />
                     <div className='w-full '>
                         <button className='bg-cyan-600 text-cyan-200 px-8 py-2  rounded-lg w-full hover:bg-sky-600 duration-300 hover:text-sky-200
-                        ' onClick={handleAddProduct}>Add Product</button>
+                        ' onClick={handleAddProduct}>
+                            {
+                                isEdit ? "Edit Product" : "Add Product"
+                            }
+                        </button>
                     </div>
                 </div>
             </div>
