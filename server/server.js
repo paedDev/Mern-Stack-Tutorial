@@ -9,7 +9,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 //middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://storeapp-zeta.vercel.app/"],
+  })
+);
 app.use(express.json()); // allows us to accept json data in the req.body
 // app.use("/", (req, res) => {
 //   res.send("<h1>Hello world</h1>");
